@@ -77,13 +77,22 @@ Usage
     from flask import Flask
     from flask.ext.dropbox import Dropbox, DropboxBlueprint
 
+    import settings
+
 
     app = Flask(__name__)
-    app.secret_key = 'some-secret-key'
+    app.config.from_object(settings)
 
     dropbox = Dropbox(app)
     dropbox_blueprint = DropboxBlueprint(dropbox)
     app.register_blueprint(dropbox_blueprint, url_prefix='/dropbox')
+
+``settings.py``::
+
+    SECRET_KEY = 'some-secret-key'
+    DROPBOX_KEY = 'dropbox-app-key'
+    DROPBOX_SECRET = 'dropbox-app-secret'
+    DROPBOX_ACCESS_TYPE = 'app_folder'
 
 ``views.py``::
 
