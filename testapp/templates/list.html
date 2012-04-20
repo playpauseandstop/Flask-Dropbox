@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="well">
+    Hello, <strong>{{ info.display_name }}</strong>!
+  </div>
+
+  <table class="indent-top table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Size</th>
+        <th>Modified</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in data.contents %}
+      <tr>
+        <td><a href="{{ url_for("media", filename=item.path) }}">{{ item.path }}</a></td>
+        <td>{{ item.mime_type }}</td>
+        <td>{{ item.size }}</td>
+        <td>{{ item.modified }}</td>
+        <td class="align-center">
+          <a href="{{ url_for("download", filename=item.path) }}">Download</a> &bull;
+          <a class="delete-link" href="{{ url_for("delete", filename=item.path) }}"
+             onclick="return window.confirm('Are you sure to delete this file?');">
+            Delete
+          </a>
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="4">
+          No files available. You could <a href="{{ url_for("upload") }}">upload</a>
+          some file first.
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

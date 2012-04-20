@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title>Flask-Dropbox test project</title>
+  <meta charset="utf-8">
+
+  <link href="{{ url_for("static", filename="twitter-bootstrap-2.0.2/css/bootstrap.min.css") }}" rel="stylesheet" type="text/css">
+  <link href="{{ url_for("static", filename="twitter-bootstrap-2.0.2/css/bootstrap-responsive.min.css") }}" rel="stylesheet" type="text/css">
+
+  <style type="text/css"><!--
+    a.delete-link {
+      color: red;
+    }
+    a.delete-link:hover {
+      color: darkred;
+    }
+    td.align-center {
+      text-align: center;
+    }
+    .indent-top {
+      margin-top: 2em;
+    }
+    .indent-top-normal {
+      margin-top: 1em;
+    }
+  --></style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+  <div class="container indent-top">
+    <div class="hero-unit">
+      <h1>Flask-Dropbox test project</h1>
+      {% block hero_content %}
+      <p class="indent-top">
+      {% if not dropbox.is_authenticated %}
+        <a class="btn btn-primary" href="{{ dropbox.login_url }}">
+          <i class="icon icon-user icon-white"></i>
+          <strong>Login with Dropbox</strong>
+        </a>
+      {% else %}
+        <a class="btn btn-success" href="{{ url_for("list") }}">
+          <i class="icon icon-list-alt icon-white"></i>
+          <strong>Browse files</strong>
+        </a>
+
+        <a class="btn btn-success" href="{{ url_for("upload") }}">
+          <i class="icon icon-upload icon-white"></i>
+          <strong>Upload new file</strong>
+        </a>
+
+        <a class="btn btn-danger" href="{{ dropbox.logout_url }}">
+          <i class="icon icon-off icon-white"></i>
+          <strong>Logout</strong>
+        </a>
+      {% endif %}
+      </p>
+      {% endblock %}
+    </div>
+
+    {% block content %}{% endblock %}
+  </div>
+
+  {% block extra_body %}{% endblock %}
+
+</body>
+
+</html>

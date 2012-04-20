@@ -1,0 +1,5 @@
+dropbox==1.4
+Flask==0.8
+Flask-LazyViews==0.1
+mock==0.8.0
+unittest2==0.5.1
