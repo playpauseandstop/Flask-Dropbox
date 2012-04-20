@@ -126,8 +126,10 @@ Usage
                 filename = secure_filename(file.filename)
 
                 # Actual uploading process
-                client.put_file('/' + filename, file_obj.read())
-                return redirect(url_for('success', filename=filename))
+                result = client.put_file('/' + filename, file_obj.read())
+
+                path = result['path'].lstrip('/')
+                return redirect(url_for('success', filename=path))
 
         return u'<form action="" method="post">' \
                u'<input name="file" type="file">' \
