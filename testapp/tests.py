@@ -21,7 +21,8 @@ from dropbox.rest import ErrorResponse
 from dropbox.session import DropboxSession
 from flask import session, url_for
 from flask.ext.dropbox import Dropbox, DropboxBlueprint
-from flask.ext.dropbox.settings import DROPBOX_ACCESS_TOKEN_KEY
+from flask.ext.dropbox.settings import DROPBOX_ACCESS_TOKEN_KEY, \
+    DROPBOX_REQUEST_TOKEN_KEY
 from flask.ext.dropbox.utils import safe_url_for
 from mock import MagicMock
 from oauth.oauth import OAuthToken
@@ -275,6 +276,34 @@ class TestDropboxViews(TestCase):
             dropbox.logout()
 
         super(TestDropboxViews, self).tearDown()
+
+    def test_callback(self):
+        with app.test_request_context():
+            callback_url = url_for('dropbox.callback')
+
+        response = self.app.get(callback_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('<h3>Warning</h3>', response.data)
+        self.assertIn(
+            "Dropbox API didn't return valid oAuth token.", response.data
+        )
+
+        token = self.token.key
+        response = self.app.get(callback_url + '?oauth_token=%s' % token[::-1])
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('<h3>Warning</h3>', response.data)
+        self.assertIn(
+            'Looks like, oAuth token from Dropbox API is broken.',
+            response.data
+        )
+
+        response = self.app.get(callback_url + '?oauth_token=%s' % token)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('<h3>Warning</h3>', response.data)
+        self.assertNotIn(
+            'Looks like, oAuth token from Dropbox API is broken.',
+            response.data
+        )
 
     def test_delete(self):
         response = self.app.get(self.delete_url)
