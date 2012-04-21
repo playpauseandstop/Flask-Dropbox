@@ -57,6 +57,20 @@ By default, you don't need to provide this setting, cause ``Flask-Dropbox``
 will setup callback URL automaticly usign current host and type of request,
 but if you don't trust us, you could to rewrite this setting manually.
 
+DROPBOX_CALLBACK_TEMPLATE
+-------------------------
+
+Template to be used for showing errors while trying to process oAuth callback
+from Dropbox API. By default: ``'dropbox/callback.html'``.
+
+Next boolean vars could be sent to the template:
+
+* ``error_oauth_token`` - Dropbox API didn't return oAuth token.
+* ``error_not_equal_tokens`` - oAuth token from Dropbox API is not equal to
+  request token stored in Flask session.
+* ``error_response`` - Dropbox API returns ``ErrorResponse`` instance. Also
+  actual exception as ``error`` var would be sent to the template too.
+
 DROPBOX_LOGIN_REDIRECT
 ----------------------
 
