@@ -1,4 +1,5 @@
-from flask import redirect, request, session, url_for
+from dropbox.rest import ErrorResponse
+from flask import redirect, render_template, request, session, url_for
 
 from .settings import DROPBOX_REQUEST_TOKEN_KEY
 from .utils import safe_url_for
@@ -10,27 +11,35 @@ def callback(dropbox):
 
     If all OK - redirects to ``DROPBOX_LOGIN_REDIRECT`` url.
 
-    Could show errors on:
+    Could render template with error message on:
 
-    * Error response from Dropbox API
     * oAuth token is not provided
     * oAuth token is not equal to request token
+    * Error response from Dropbox API
 
+    Default template to render is ``'dropbox/callback.html'``, you could
+    overwrite it with ``DROPBOX_CALLBACK_TEMPLATE`` config var.
     """
+    # Initial vars
+    template = dropbox.DROPBOX_CALLBACK_TEMPLATE or 'dropbox/callback.html'
+
     # Get oAuth token from Dropbox
     oauth_token = request.args.get('oauth_token')
 
     if not oauth_token:
-        raise ValueError('Please, supply "oauth_token" arg first.')
+        return render_template(template, error_oauth_token=True)
 
     # oAuth token **should** be equal to stored request token
     request_token = session.get(DROPBOX_REQUEST_TOKEN_KEY)
 
-    if oauth_token != request_token.key:
-        raise ValueError('Seems like oAuth token is broken.')
+    if not request_token or oauth_token != request_token.key:
+        return render_template(template, error_not_equal_tokens=True)
 
     # Do login with current request token
-    dropbox.login(request_token)
+    try:
+        dropbox.login(request_token)
+    except ErrorResponse, e:
+        return render_template(template, error_response=True, error=e)
 
     # Redirect to resulted page
     redirect_to = safe_url_for(dropbox.DROPBOX_LOGIN_REDIRECT or '/')

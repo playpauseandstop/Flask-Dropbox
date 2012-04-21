@@ -11,8 +11,8 @@ __all__ = ('Dropbox', 'safe_url_for')
 
 
 DROPBOX_CONFIGS = ('*DROPBOX_KEY', '*DROPBOX_SECRET', '*DROPBOX_ACCESS_TYPE',
-                   'DROPBOX_CALLBACK_URL', 'DROPBOX_LOGIN_REDIRECT',
-                   'DROPBOX_LOGOUT_REDIRECT')
+                   'DROPBOX_CALLBACK_TEMPLATE', 'DROPBOX_CALLBACK_URL',
+                   'DROPBOX_LOGIN_REDIRECT', 'DROPBOX_LOGOUT_REDIRECT')
 
 
 class Dropbox(object):
