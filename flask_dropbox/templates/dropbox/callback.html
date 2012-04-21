@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  <h3>{{ _("Warning") }}</h3>
+  <p>
+    {{ _("Cannot login with Dropbox. The reason is:") }}
+    <em>
+      {% if error_oauth_token %}Dropbox API didn't return valid oAuth token.{% endif %}
+      {% if error_not_equal_tokens %}Looks like, oAuth token from Dropbox API is broken.{% endif %}
+      {% if error_response %}{{ error }}{% endif %}
+    </em>
+  </p>
+{% endblock %}
