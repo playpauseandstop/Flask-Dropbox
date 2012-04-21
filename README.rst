@@ -160,6 +160,12 @@ the project's `GitHub issues
 ChangeLog
 =========
 
+0.1.1
+-----
+
++ Check that access token is the instance of ``oauth.OAuthToken`` class and if
+  it exists in session.
+
 0.1
 ---
 
