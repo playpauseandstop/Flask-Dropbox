@@ -5,4 +5,5 @@ build/
 dist/
 testapp/env/
 
+MANIFEST
 settings_local.py
