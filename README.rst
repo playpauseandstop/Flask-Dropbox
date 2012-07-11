@@ -160,6 +160,11 @@ the project's `GitHub issues
 ChangeLog
 =========
 
+0.1.3
+-----
+
++ Fix handling templates while installing via setup.py
+
 0.1.2
 -----
 
