@@ -160,6 +160,11 @@ the project's `GitHub issues
 ChangeLog
 =========
 
+0.1.2
+-----
+
++ Add support of Dropbox SDK 1.4.1
+
 0.1.1
 -----
 
