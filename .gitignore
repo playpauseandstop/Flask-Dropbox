@@ -3,7 +3,7 @@
 
 build/
 dist/
-testapp/env/
+testapp/env*/
 
 MANIFEST
 settings_local.py
