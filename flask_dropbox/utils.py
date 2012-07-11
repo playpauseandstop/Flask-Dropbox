@@ -1,12 +1,18 @@
 from dropbox.client import DropboxClient
 from dropbox.session import DropboxSession
 from flask import request, session as flask_session, url_for
-from oauth.oauth import OAuthToken
 from werkzeug.routing import BuildError as RoutingBuildError
 from werkzeug.utils import cached_property
 
-from .settings import DROPBOX_ACCESS_TOKEN_KEY, DROPBOX_REQUEST_TOKEN_KEY
+from oauth.oauth import OAuthToken
+try:
+    #for dropbox sdk 1.4.1
+    from dropbox.session import OAuthToken as DBOAuthToken
+    VALID_TOKEN_CLASSES = [OAuthToken, DBOAuthToken]
+except ImportError:
+    VALID_TOKEN_CLASSES = [OAuthToken]
 
+from .settings import DROPBOX_ACCESS_TOKEN_KEY, DROPBOX_REQUEST_TOKEN_KEY
 
 __all__ = ('Dropbox', 'safe_url_for')
 
@@ -77,8 +83,8 @@ class Dropbox(object):
         """
         Check if current user logged in with Dropbox or not.
         """
-        return DROPBOX_ACCESS_TOKEN_KEY in flask_session and \
-               isinstance(flask_session[DROPBOX_ACCESS_TOKEN_KEY], OAuthToken)
+        db_session_key = flask_session.get(DROPBOX_ACCESS_TOKEN_KEY)
+        return db_session_key and any(isinstance(db_session_key, cls) for cls in VALID_TOKEN_CLASSES)
 
     def login(self, request_token):
         """
