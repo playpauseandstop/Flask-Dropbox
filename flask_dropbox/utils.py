@@ -4,15 +4,14 @@ from flask import request, session as flask_session, url_for
 from werkzeug.routing import BuildError as RoutingBuildError
 from werkzeug.utils import cached_property
 
-from oauth.oauth import OAuthToken
 try:
-    #for dropbox sdk 1.4.1
-    from dropbox.session import OAuthToken as DBOAuthToken
-    VALID_TOKEN_CLASSES = [OAuthToken, DBOAuthToken]
+    # For Dropbox SDK 1.4.1+
+    from dropbox.session import OAuthToken
 except ImportError:
-    VALID_TOKEN_CLASSES = [OAuthToken]
+    from oauth.oauth import OAuthToken
 
 from .settings import DROPBOX_ACCESS_TOKEN_KEY, DROPBOX_REQUEST_TOKEN_KEY
+
 
 __all__ = ('Dropbox', 'safe_url_for')
 
@@ -84,7 +83,7 @@ class Dropbox(object):
         Check if current user logged in with Dropbox or not.
         """
         db_session_key = flask_session.get(DROPBOX_ACCESS_TOKEN_KEY)
-        return db_session_key and any(isinstance(db_session_key, cls) for cls in VALID_TOKEN_CLASSES)
+        return db_session_key and isinstance(db_session_key, OAuthToken)
 
     def login(self, request_token):
         """
@@ -149,6 +148,20 @@ class Dropbox(object):
         return DropboxSession(self.DROPBOX_KEY,
                               self.DROPBOX_SECRET,
                               self.DROPBOX_ACCESS_TYPE)
+
+
+# Monkey-patch Dropbox SDK ``OAuthToken`` class to add support of pickling
+# tokens. Without this monkey-patch all tries to save any token in Flask
+# session will cause "TypeError: a class that defines __slots__ without
+# defining __getstate__ cannot be pickled"
+if hasattr(OAuthToken, '__slots__'):
+    OAuthToken.__getstate__ = \
+        lambda instance: dict([(key, getattr(instance, key)) \
+                                for key in instance.__slots__])
+    OAuthToken.__setstate__ = \
+        lambda instance, data: [setattr(instance, key, value) \
+                                for key, value in data.iteritems() \
+                                if key in instance.__slots__]
 
 
 def safe_url_for(url, *args, **kwargs):
