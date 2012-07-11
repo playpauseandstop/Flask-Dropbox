@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
 import unittest
 import urllib
 
@@ -23,9 +28,8 @@ from flask import session, url_for
 from flask.ext.dropbox import Dropbox, DropboxBlueprint
 from flask.ext.dropbox.settings import DROPBOX_ACCESS_TOKEN_KEY, \
     DROPBOX_REQUEST_TOKEN_KEY
-from flask.ext.dropbox.utils import safe_url_for
+from flask.ext.dropbox.utils import OAuthToken, safe_url_for
 from mock import MagicMock
-from oauth.oauth import OAuthToken
 from werkzeug.routing import BuildError as RoutingBuildError
 
 from testapp.app import app, dropbox
@@ -91,6 +95,10 @@ class TestCase(unittest.TestCase):
     def setUp(self):
         app.config['TESTING'] = True
         self.app = app.test_client()
+
+        key = ''.join(choice(letters + digits) for _ in range(12))
+        secret = ''.join(choice(letters + digits) for _ in range(16))
+        self.token = OAuthToken(key, secret)
 
     def tearDown(self):
         app.config['TESTING'] = False
@@ -228,6 +236,13 @@ class TestDropboxUtils(TestCase):
             self.assertRaises(RoutingBuildError, url_for, 'does_not_exist')
             self.assertEqual(safe_url_for('does_not_exist'), 'does_not_exist')
 
+    def test_token_pickable(self):
+        dump = pickle.dumps(self.token)
+        token = pickle.loads(dump)
+
+        self.assertEqual(self.token.key, token.key)
+        self.assertEqual(self.token.secret, token.secret)
+
 
 class TestDropboxViews(TestCase):
 
@@ -239,7 +254,7 @@ class TestDropboxViews(TestCase):
             self.delete_url = url_for('delete', filename=filename)
             self.download_url = url_for('download', filename=filename)
             self.home_url = url_for('home')
-            self.list_url = url_for('list')
+            self.files_url = url_for('files')
             self.media_url = url_for('media', filename=filename)
             self.success_url = url_for('success', filename=filename)
             self.upload_url = url_for('upload')
@@ -251,11 +266,6 @@ class TestDropboxViews(TestCase):
             MagicMock(return_value=dropbox_url)
 
         self.old_obtain_request_token = DropboxSession.obtain_request_token
-
-        token = ''.join(choice(letters + digits) for _ in range(12))
-        secret = ''.join(choice(letters + digits) for _ in range(16))
-        self.token = OAuthToken(token, secret)
-
         DropboxSession.obtain_request_token = \
             MagicMock(return_value=self.token)
 
@@ -321,7 +331,7 @@ class TestDropboxViews(TestCase):
         response = self.app.get(self.delete_url)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers['Location'],
-                         'http://localhost%s' % self.list_url)
+                         'http://localhost%s' % self.files_url)
 
     def test_download(self):
         response = self.app.get(self.download_url)
@@ -354,11 +364,11 @@ class TestDropboxViews(TestCase):
         response = self.app.get(self.home_url)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('Login with Dropbox', response.data)
-        self.assertIn(self.list_url, response.data)
+        self.assertIn(self.files_url, response.data)
         self.assertIn(self.upload_url, response.data)
 
-    def test_list(self):
-        response = self.app.get(self.list_url)
+    def test_files(self):
+        response = self.app.get(self.files_url)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers['Location'], 'http://localhost/')
 
@@ -374,7 +384,7 @@ class TestDropboxViews(TestCase):
         self.old_metadata = DropboxClient.metadata
         DropboxClient.metadata = MagicMock(return_value=TEST_METADATA_EMPTY)
 
-        response = self.app.get(self.list_url)
+        response = self.app.get(self.files_url)
         self.assertEqual(response.status_code, 200)
         self.assertIn('Hello, <strong>Igor Davydenko</strong>!', response.data)
         self.assertIn('No files available.', response.data)
@@ -382,7 +392,7 @@ class TestDropboxViews(TestCase):
         # Remock ``metadata`` method
         DropboxClient.metadata = MagicMock(return_value=TEST_METADATA)
 
-        response = self.app.get(self.list_url)
+        response = self.app.get(self.files_url)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('No files available.', response.data)
         self.assertIn(self.media_url, response.data)

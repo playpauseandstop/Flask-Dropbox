@@ -22,11 +22,13 @@ views = LazyViews(app)
 views.add('/', 'views.home')
 views.add('/delete/<path:filename>', 'views.delete')
 views.add('/download/<path:filename>', 'views.download', endpoint='download')
-views.add('/list', 'views.list')
+views.add('/files', 'views.files')
 views.add('/media/<path:filename>',
           'views.download',
           defaults={'media': True},
           endpoint='media')
+views.add('/session/clear', 'views.session_clear')
+views.add('/session/dump', 'views.session_dump')
 views.add('/success/<path:filename>', 'views.success')
 views.add('/upload', 'views.upload', methods=('GET', 'POST'))
 

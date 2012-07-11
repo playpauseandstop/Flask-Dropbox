@@ -1,4 +1,5 @@
-from flask import make_response, redirect, render_template, request, url_for
+from flask import make_response, redirect, render_template, request, session, \
+                  url_for
 from werkzeug import secure_filename
 
 from testapp.app import dropbox
@@ -14,7 +15,7 @@ def delete(filename):
         return redirect(url_for('home'))
 
     dropbox.client.file_delete('/' + filename)
-    return redirect(url_for('list'))
+    return redirect(url_for('files'))
 
 
 def download(filename, media=False):
@@ -50,7 +51,7 @@ def home():
     return render_template('home.html')
 
 
-def list():
+def files():
     """
     All files page.
 
@@ -67,7 +68,29 @@ def list():
     for item in data['contents']:
         item['path'] = item['path'].lstrip('/')
 
-    return render_template('list.html', data=data, info=info)
+    return render_template('files.html', data=data, info=info)
+
+
+def session_clear():
+    """
+    Clear current Flask session and redirects to home page.
+    """
+    session.clear()
+    return redirect(url_for('home'))
+
+
+def session_dump():
+    """
+    Show current session dump.
+    """
+    items = list(session.items())
+
+    response = make_response(
+        u'\n'.join([u'%s => %r' % (key, value) for key, value in items])
+    )
+    response.mimetype = 'text/plain'
+
+    return response
 
 
 def success(filename):
