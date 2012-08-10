@@ -18,19 +18,19 @@ dropbox_blueprint = DropboxBlueprint(dropbox)
 app.register_blueprint(dropbox_blueprint, url_prefix='/dropbox')
 
 # Add test project views
-views = LazyViews(app)
-views.add('/', 'views.home')
-views.add('/delete/<path:filename>', 'views.delete')
-views.add('/download/<path:filename>', 'views.download', endpoint='download')
-views.add('/files', 'views.files')
+views = LazyViews(app, 'testapp.views')
+views.add('/', 'home')
+views.add('/delete/<path:filename>', 'delete')
+views.add('/download/<path:filename>', 'download', endpoint='download')
+views.add('/files', 'files')
 views.add('/media/<path:filename>',
-          'views.download',
+          'download',
           defaults={'media': True},
           endpoint='media')
-views.add('/session/clear', 'views.session_clear')
-views.add('/session/dump', 'views.session_dump')
-views.add('/success/<path:filename>', 'views.success')
-views.add('/upload', 'views.upload', methods=('GET', 'POST'))
+views.add('/session/clear', 'session_clear')
+views.add('/session/dump', 'session_dump')
+views.add('/success/<path:filename>', 'success')
+views.add('/upload', 'upload', methods=('GET', 'POST'))
 
 
 if __name__ == '__main__':
