@@ -15,7 +15,7 @@ readme.close()
 setup(
     name='Flask-Dropbox',
     version='0.1.3',
-    description='Add support of Dropbox API to the Flask applications.',
+    description='Dropbox Python SDK support for Flask applications.',
     long_description=README,
     author='Igor Davydenko',
     author_email='playpauseandstop@gmail.com',

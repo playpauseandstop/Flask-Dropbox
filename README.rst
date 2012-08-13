@@ -2,7 +2,7 @@
 Flask-Dropbox
 =============
 
-Add support of Dropbox API to the Flask applications.
+Dropbox Python SDK support for Flask applications.
 
 Requirements
 ============
