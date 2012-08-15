@@ -160,6 +160,12 @@ the project's `GitHub issues
 ChangeLog
 =========
 
+0.1.4
+-----
+
++ Add ``dropbox`` library as install requirement in ``setup.py``.
++ Update project short description.
+
 0.1.3
 -----
 

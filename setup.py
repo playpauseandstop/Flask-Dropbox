@@ -14,7 +14,7 @@ readme.close()
 
 setup(
     name='Flask-Dropbox',
-    version='0.1.3',
+    version='0.1.4',
     description='Dropbox Python SDK support for Flask applications.',
     long_description=README,
     author='Igor Davydenko',
@@ -22,6 +22,7 @@ setup(
     url='https://github.com/playpauseandstop/Flask-Dropbox',
     install_requires=[
         'Flask',
+        'dropbox',
     ],
     package_data={
         'flask_dropbox': [
