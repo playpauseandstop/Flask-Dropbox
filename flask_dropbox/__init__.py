@@ -1,2 +1,2 @@
 from .blueprint import DropboxBlueprint
-from .utils import Dropbox
+from .extension import Dropbox
