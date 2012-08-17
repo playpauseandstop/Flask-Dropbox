@@ -2,7 +2,7 @@ import os
 import sys
 
 from flask import Flask
-from flask.ext.dropbox import Dropbox, DropboxBlueprint
+from flask.ext.dropbox import Dropbox
 from flask.ext.lazyviews import LazyViews
 
 import settings
@@ -14,8 +14,7 @@ app.config.from_object(settings)
 
 # Setup Dropbox support
 dropbox = Dropbox(app)
-dropbox_blueprint = DropboxBlueprint(dropbox)
-app.register_blueprint(dropbox_blueprint, url_prefix='/dropbox')
+dropbox.register_blueprint(url_prefix='/dropbox')
 
 # Add test project views
 views = LazyViews(app, 'testapp.views')

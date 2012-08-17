@@ -1,5 +1,5 @@
-from flask import make_response, redirect, render_template, request, session, \
-                  url_for
+from flask import (make_response, redirect, render_template, request, session,
+                   url_for)
 from werkzeug import secure_filename
 
 from testapp.app import dropbox

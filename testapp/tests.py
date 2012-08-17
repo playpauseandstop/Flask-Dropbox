@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import copy
+
 try:
     import cPickle as pickle
 except ImportError:
@@ -26,9 +28,10 @@ from dropbox.rest import ErrorResponse
 from dropbox.session import DropboxSession
 from flask import session, url_for
 from flask.ext.dropbox import Dropbox, DropboxBlueprint
+from flask.ext.dropbox.extension import OAuthToken
 from flask.ext.dropbox.settings import DROPBOX_ACCESS_TOKEN_KEY, \
     DROPBOX_REQUEST_TOKEN_KEY
-from flask.ext.dropbox.utils import OAuthToken, safe_url_for
+from flask.ext.dropbox.utils import safe_url_for
 from mock import MagicMock
 from werkzeug.routing import BuildError as RoutingBuildError
 
@@ -124,11 +127,8 @@ class TestDropboxBlueprint(TestCase):
         self.assertIn('dropbox.logout', app.view_functions)
 
         with app.test_request_context():
-            url = url_for('dropbox.callback')
-            self.assertTrue(url.endswith('/callback'))
-
-            url = url_for('dropbox.logout')
-            self.assertTrue(url.endswith('/logout'))
+            self.assertEqual(url_for('dropbox.callback'), '/dropbox/callback')
+            self.assertEqual(url_for('dropbox.logout'), '/dropbox/logout')
 
 
 class TestDropboxUtils(TestCase):
@@ -229,6 +229,29 @@ class TestDropboxUtils(TestCase):
     def test_dropbox_logout_url(self):
         with app.test_request_context():
             self.assertEqual(url_for('dropbox.logout'), dropbox.logout_url)
+
+    def test_register_blueprint(self):
+        self.assertIn('dropbox', app.blueprints)
+        old_blueprint = app.blueprints['dropbox']
+
+        rules = filter(lambda rule: rule.endpoint.startswith('dropbox.'),
+                       app.url_map._rules)
+        self.assertEqual(len(rules), 2)
+
+        dropbox_obj = Dropbox(app)
+        self.assertRaises(AssertionError,
+                          dropbox_obj.register_blueprint,
+                          url_prefix='/dbox')
+
+        del app.blueprints['dropbox']
+        dropbox_obj.register_blueprint(url_prefix='/dbox')
+
+        rules = filter(lambda rule: rule.endpoint.startswith('dropbox.'),
+                       app.url_map._rules)
+        self.assertEqual(len(rules), 4)
+
+        self.assertIn('dropbox', app.blueprints)
+        app.blueprints['dropbox'] = old_blueprint
 
     def test_safe_url_for(self):
         with app.test_request_context():
