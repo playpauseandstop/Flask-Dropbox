@@ -98,8 +98,7 @@ Usage
     app.config.from_object(settings)
 
     dropbox = Dropbox(app)
-    dropbox_blueprint = DropboxBlueprint(dropbox)
-    app.register_blueprint(dropbox_blueprint, url_prefix='/dropbox')
+    dropbox.register_blueprint(url_prefix='/dropbox')
 
 ``settings.py``::
 
@@ -159,6 +158,15 @@ the project's `GitHub issues
 
 ChangeLog
 =========
+
+0.1.5
+-----
+
++ Add ``register_blueprint`` shortcut to initialize ``DropboxBlueprint`` with
+  default values in one line.
++ Move ``Dropbox`` class from ``flask.ext.dropbox.utils`` to
+  ``flask.ext.dropbox.extension`` module. But mainly, it wouldn't affected to
+  your code if you used ``from flask.ext.dropbox import Dropbox`` statements.
 
 0.1.4
 -----
