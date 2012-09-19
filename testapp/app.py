@@ -52,6 +52,7 @@ if __name__ == '__main__':
         print >> sys.stderr, 'Please, use proper digit value to the ' \
                              '``port`` argument.\nCannot convert %r to ' \
                              'integer.' % port
+        sys.exit(1)
 
     app.debug = bool(int(os.environ.get('DEBUG', 1)))
     app.run(host=host, port=port)
