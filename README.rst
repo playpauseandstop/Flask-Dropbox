@@ -162,7 +162,7 @@ ChangeLog
 0.2
 ---
 
-+ Implement ``init_app`` method to ``Dropbox`` extension class.
++ Add ``init_app`` method to ``Dropbox`` extension class.
 + Do not send ``dropbox`` instance for initialization of ``DropboxBlueprint``
   class.
 + Use ``current_app.extensions['dropbox']`` statement in views for getting
