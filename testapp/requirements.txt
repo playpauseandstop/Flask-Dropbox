@@ -1,5 +1,6 @@
 Flask==0.9
-Flask-LazyViews==0.1
+Flask-LazyViews==0.3
+Flask-Script==0.5.1
 mock==0.8.0
 unittest2==0.5.1
 

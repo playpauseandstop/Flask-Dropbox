@@ -4,6 +4,7 @@ import sys
 from flask import Flask
 from flask.ext.dropbox import Dropbox
 from flask.ext.lazyviews import LazyViews
+from flask.ext.script import Manager
 
 import settings
 
@@ -12,9 +13,10 @@ import settings
 app = Flask(__name__)
 app.config.from_object(settings)
 
-# Setup Dropbox support
+# Setup Dropbox and script extensions
 dropbox = Dropbox(app)
 dropbox.register_blueprint(url_prefix='/dropbox')
+manager = Manager(app)
 
 # Add test project views
 views = LazyViews(app, 'testapp.views')
@@ -30,29 +32,3 @@ views.add('/session/clear', 'session_clear')
 views.add('/session/dump', 'session_dump')
 views.add('/success/<path:filename>', 'success')
 views.add('/upload', 'upload', methods=('GET', 'POST'))
-
-
-if __name__ == '__main__':
-    host = '0.0.0.0'
-    port = 5000
-
-    if len(sys.argv) == 2:
-        mixed = sys.argv[1]
-
-        try:
-            host, port = mixed.split(':')
-        except ValueError:
-            port = mixed
-    elif len(sys.argv) == 3:
-        host, port = sys.argv[1:]
-
-    try:
-        port = int(port)
-    except (TypeError, ValueError):
-        print >> sys.stderr, 'Please, use proper digit value to the ' \
-                             '``port`` argument.\nCannot convert %r to ' \
-                             'integer.' % port
-        sys.exit(1)
-
-    app.debug = bool(int(os.environ.get('DEBUG', 1)))
-    app.run(host=host, port=port)

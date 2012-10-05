@@ -117,8 +117,7 @@ class TestDropboxBlueprint(TestCase):
         import_name = DropboxBlueprint.__module__
         self.assertRaises(TypeError, DropboxBlueprint, name, import_name)
 
-        blueprint = DropboxBlueprint(dropbox,
-                                     name=name,
+        blueprint = DropboxBlueprint(name=name,
                                      import_name=import_name)
         self.assertEqual(blueprint.name, name)
 

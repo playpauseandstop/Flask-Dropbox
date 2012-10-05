@@ -1,29 +1,34 @@
-.PHONY: bootstrap clean server shell test
+.PHONY: bootstrap clean manage server shell test
 
-env = env
-env14 = $(env)-1.4
-project = .
-python = PYTHONPATH=.:.. $(env)/bin/python
-python14 = PYTHONPATH=.:.. $(env14)/bin/python
+ENV = env
+ENV14 = $(ENV)-1.4
+PROJECT = .
+
+PYTHON = PYTHONPATH=.:.. $(ENV)/bin/python
+PYTHON14 = PYTHONPATH=.:.. $(ENV14)/bin/python
+MANAGE = $(PYTHON) $(PROJECT)/manage.py
 
 HOST ?= 0.0.0.0
 PORT ?= 4354
 
 bootstrap:
-	bootstrap.py --copy-virtualenv
+	bootstrapper --copy-virtualenv
 
 clean:
 	find . -name '*.pyc' -delete
 
 distclean: clean
-	rm -rf build dist $(env) $(env14)
+	rm -rf ../build/ ../dist/ $(ENV) $(ENV14)
+
+manage:
+	$(MANAGE) $(COMMAND)
 
 server:
-	$(python) $(project)/app.py $(HOST):$(PORT)
+	COMMAND="runserver -t $(HOST) -p $(PORT)" $(MAKE) manage
 
 shell:
-	PYTHONPATH=.:.. $(env)/bin/ipython --color-info --no-banner --pprint
+	COMMAND=shell $(MAKE) manage
 
 test:
-	$(python) $(project)/tests.py
-	$(python14) $(project)/tests.py
+	$(PYTHON) $(PROJECT)/tests.py
+	$(PYTHON14) $(PROJECT)/tests.py
