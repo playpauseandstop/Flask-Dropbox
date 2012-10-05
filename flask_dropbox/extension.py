@@ -25,29 +25,13 @@ class Dropbox(object):
     """
     Simple wrapper to Dropbox Python API.
     """
-    def __init__(self, app):
+    def __init__(self, app=None):
         """
         Initialize wrapper, read Dropbox settings from application config and
         register ``dropbox`` var to the all application templates.
         """
-        # Read Dropbox configuration
-        for name in DROPBOX_CONFIGS:
-            real_name = name.replace('*', '')
-            value = app.config.get(real_name)
-
-            if not value and name.startswith('*'):
-                raise ValueError('Please, supply {0!r} config value first.'.
-                                 format(real_name))
-
-            setattr(self, real_name, value)
-
-        # Store current application in instance
-        self.app = app
-
-        # Register context processor
-        @app.context_processor
-        def inject_dropbox():
-            return {'dropbox': self}
+        if app:
+            self.init_app(app)
 
     @property
     def account_info(self):
@@ -74,8 +58,32 @@ class Dropbox(object):
             client = DropboxClient(self.session)
 
             setattr(self, '_client_cache', client)
-
         return getattr(self, '_client_cache')
+
+    def init_app(self, app):
+        """
+        Initialize Dropbox application for ``app`` Flask application by
+        reading configuration values and applying its to current instance.
+        """
+        # Read Dropbox configuration
+        for name in DROPBOX_CONFIGS:
+            real_name = name.replace('*', '')
+            value = app.config.get(real_name)
+
+            if not value and name.startswith('*'):
+                raise ValueError('Please, supply {0!r} config value first.'.
+                                 format(real_name))
+
+            setattr(self, real_name, value)
+
+        # Register context processor
+        @app.context_processor
+        def inject_dropbox():
+            return {'dropbox': self}
+
+        # Store extension in application and application in current instance
+        app.extensions['dropbox'] = self
+        self.app = app
 
     @property
     def is_authenticated(self):
@@ -135,7 +143,7 @@ class Dropbox(object):
         """
         Initialize and register dropbox blueprint for current application.
         """
-        blueprint = DropboxBlueprint(self)
+        blueprint = DropboxBlueprint()
         self.app.register_blueprint(blueprint, *args, **kwargs)
 
     @property

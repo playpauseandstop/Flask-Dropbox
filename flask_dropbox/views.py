@@ -1,11 +1,12 @@
 from dropbox.rest import ErrorResponse
-from flask import redirect, render_template, request, session, url_for
+from flask import current_app, redirect, render_template, request, session, \
+    url_for
 
 from .settings import DROPBOX_REQUEST_TOKEN_KEY
 from .utils import safe_url_for
 
 
-def callback(dropbox):
+def callback():
     """
     Process response for "Login" try from Dropbox API.
 
@@ -21,6 +22,7 @@ def callback(dropbox):
     overwrite it with ``DROPBOX_CALLBACK_TEMPLATE`` config var.
     """
     # Initial vars
+    dropbox = current_app.extensions['dropbox']
     template = dropbox.DROPBOX_CALLBACK_TEMPLATE or 'dropbox/callback.html'
 
     # Get oAuth token from Dropbox
@@ -46,12 +48,13 @@ def callback(dropbox):
     return redirect(redirect_to)
 
 
-def logout(dropbox):
+def logout():
     """
     Logout current user from Dropbox.
 
     If all OK - redirects to ``DROPBOX_LOGOUT_REDIRECT`` url.
     """
+    dropbox = current_app.extensions['dropbox']
     dropbox.logout()
 
     redirect_to = safe_url_for(dropbox.DROPBOX_LOGOUT_REDIRECT or '/')
