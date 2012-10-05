@@ -14,7 +14,7 @@ readme.close()
 
 setup(
     name='Flask-Dropbox',
-    version='0.1.5',
+    version='0.2',
     description='Dropbox Python SDK support for Flask applications.',
     long_description=README,
     author='Igor Davydenko',
