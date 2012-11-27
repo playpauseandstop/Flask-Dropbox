@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import copy
 
 try:
@@ -455,7 +453,3 @@ class TestDropboxViews(TestCase):
         response = self.app.get(self.upload_url)
         self.assertEqual(response.status_code, 200)
         self.assertIn('Upload</button>', response.data)
-
-
-if __name__ == '__main__':
-    unittest.main()
