@@ -16,4 +16,5 @@ install:
  - "pip install -I Flask==$FLASK_VERSION"
  - "pip install -I https://www.dropbox.com/static/developers/dropbox-python-sdk-$DROPBOX_VERSION.zip"
  - "pip install -e ."
-script: "make -C testapp/ test"
+before_script: "python testapp/manage.py settings_local"
+script: "unit2 discover -s testapp/"
