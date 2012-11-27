@@ -2,6 +2,8 @@
 Flask-Dropbox
 =============
 
+.. image:: https://secure.travis-ci.org/playpauseandstop/Flask-Dropbox.png
+
 Dropbox Python SDK support for Flask applications.
 
 Requirements
