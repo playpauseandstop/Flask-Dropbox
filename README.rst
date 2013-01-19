@@ -111,7 +111,7 @@ Usage
 
 ``views.py``::
 
-    from flask import url_for
+    from flask import url_for, redirect, request
     from werkzeug import secure_filename
 
     from app import app, dropbox
