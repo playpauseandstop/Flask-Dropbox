@@ -1,6 +1,6 @@
 from dropbox.client import DropboxClient
 from dropbox.session import DropboxSession
-from flask import request, session as flask_session, url_for
+from flask import request, session as flask_session, url_for, g
 from werkzeug.utils import cached_property
 
 try:
@@ -40,25 +40,25 @@ class Dropbox(object):
 
         Also stores result in instance cache to reduce network connections.
         """
-        if not hasattr(self, '_account_info_cache'):
+        if not hasattr(g, '_account_info_cache'):
             account_info = self.client.account_info()
-            setattr(self, '_account_info_cache', account_info)
-        return getattr(self, '_account_info_cache')
+            g._account_info_cache = account_info
+        return g._account_info_cache
 
     @property
     def client(self):
         """
         Initialize Dropbox client instance or return it from instance cache.
         """
-        if not hasattr(self, '_client_cache'):
+        if not hasattr(g, '_client_cache'):
             assert self.is_authenticated, 'Please, login with Dropbox first.'
             token = flask_session[DROPBOX_ACCESS_TOKEN_KEY]
 
             self.session.set_token(token.key, token.secret)
             client = DropboxClient(self.session)
 
-            setattr(self, '_client_cache', client)
-        return getattr(self, '_client_cache')
+            g._client_cache = client
+        return g._client_cache
 
     def init_app(self, app):
         """
@@ -122,12 +122,6 @@ class Dropbox(object):
         """
         Revoke access for Dropbox user to the site.
         """
-        # Do not forget to remove account info and client cache as well
-        if hasattr(self, '_account_info_cache'):
-            delattr(self, '_account_info_cache')
-
-        if hasattr(self, '_client_cache'):
-            delattr(self, '_client_cache')
 
         if DROPBOX_ACCESS_TOKEN_KEY in flask_session:
             del flask_session[DROPBOX_ACCESS_TOKEN_KEY]
