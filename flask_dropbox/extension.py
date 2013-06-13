@@ -122,7 +122,10 @@ class Dropbox(object):
         """
         Revoke access for Dropbox user to the site.
         """
-
+        if hasattr(g, '_account_info_cache'):
+            del g._account_info_cache
+        if hasattr(g, '_client_cache'):
+            del g._client_cache
         if DROPBOX_ACCESS_TOKEN_KEY in flask_session:
             del flask_session[DROPBOX_ACCESS_TOKEN_KEY]
 
