@@ -52,9 +52,9 @@ class Dropbox(object):
         """
         if not hasattr(g, '_client_cache'):
             assert self.is_authenticated, 'Please, login with Dropbox first.'
-            token = flask_session[DROPBOX_ACCESS_TOKEN_KEY]
 
-            self.session.set_token(token.key, token.secret)
+            key, secret = flask_session[DROPBOX_ACCESS_TOKEN_KEY]
+            self.session.set_token(key, secret)
             client = DropboxClient(self.session)
 
             g._client_cache = client
@@ -90,8 +90,7 @@ class Dropbox(object):
         """
         Check if current user logged in with Dropbox or not.
         """
-        db_session_key = flask_session.get(DROPBOX_ACCESS_TOKEN_KEY)
-        return db_session_key and isinstance(db_session_key, OAuthToken)
+        return DROPBOX_ACCESS_TOKEN_KEY in flask_session
 
     def login(self, request_token):
         """
@@ -99,7 +98,7 @@ class Dropbox(object):
         """
         # Generate access token for current user
         access_token = self.session.obtain_access_token(request_token)
-        flask_session[DROPBOX_ACCESS_TOKEN_KEY] = access_token
+        flask_session[DROPBOX_ACCESS_TOKEN_KEY] = [access_token.key, access_token.secret]
 
         # Remove available request token
         del flask_session[DROPBOX_REQUEST_TOKEN_KEY]
