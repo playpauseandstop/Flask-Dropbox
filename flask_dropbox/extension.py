@@ -126,6 +126,8 @@ class Dropbox(object):
             del g._account_info_cache
         if hasattr(g, '_client_cache'):
             del g._client_cache
+        if hasattr(g, '_dropbox_session'):
+            del g._dropbox_session
         if DROPBOX_ACCESS_TOKEN_KEY in flask_session:
             del flask_session[DROPBOX_ACCESS_TOKEN_KEY]
 
@@ -152,14 +154,18 @@ class Dropbox(object):
         flask_session[DROPBOX_REQUEST_TOKEN_KEY] = token
         return token
 
-    @cached_property
+    @property
     def session(self):
         """
         Initialize or return already initialized ``DropboxSession`` instance.
         """
-        return DropboxSession(self.DROPBOX_KEY,
-                              self.DROPBOX_SECRET,
-                              self.DROPBOX_ACCESS_TYPE)
+
+        if not hasattr(g, '_dropbox_session'):
+            g._dropbox_session = DropboxSession(
+                self.DROPBOX_KEY,
+                self.DROPBOX_SECRET,
+                self.DROPBOX_ACCESS_TYPE)
+        return g._dropbox_session
 
 
 # Monkey-patch Dropbox SDK ``OAuthToken`` class to add support of pickling
