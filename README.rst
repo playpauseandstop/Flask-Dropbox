@@ -85,6 +85,17 @@ DROPBOX_LOGOUT_REDIRECT
 Page to redirect to after user logged out from authenticated Dropbox session.
 By default: ``/``.
 
+DROPBOX_CACHE_STORAGE
+---------------------
+
+.. versionadded:: 0.3
+
+Where to place account info, Dropbox client and Dropbox session instances. In
+0.2 and lower all this info stored in ``flask_dropbox.Dropbox`` instance, which
+isn't thread safe, but from 0.3 all these values stored to ``flask.g``. If you
+need custom storage you can override this setting with object or string which
+would be imported.
+
 Usage
 =====
 
@@ -160,6 +171,14 @@ the project's `GitHub issues
 
 ChangeLog
 =========
+
+0.3
+---
+
++ Flask 0.10 support
++ Store account info, Dropbox client and session in thread-safe ``flask.g``
+  storage instead of ``flask_dropbox.Dropbox`` instance
++ Introduce ``DROPBOX_CACHE_STORAGE`` setting
 
 0.2
 ---
