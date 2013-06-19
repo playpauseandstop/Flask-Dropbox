@@ -32,16 +32,18 @@ def callback():
         return render_template(template, error_oauth_token=True)
 
     # oAuth token **should** be equal to stored request token
-    token_creds = session.get(DROPBOX_REQUEST_TOKEN_KEY)
+    try:
+        key, secret = session.get(DROPBOX_REQUEST_TOKEN_KEY) or (None, None)
+    except ValueError:
+        return render_template(template, error_request_token=True)
 
-    if len(token_creds) != 2 or oauth_token != token_creds[0]:
+    if oauth_token != key:
         return render_template(template, error_not_equal_tokens=True)
-    request_token = OAuthToken(*token_creds)
 
     # Do login with current request token
     try:
-        dropbox.login(request_token)
-    except ErrorResponse, e:
+        dropbox.login(OAuthToken(key, secret))
+    except ErrorResponse as e:
         return render_template(template, error_response=True, error=e)
 
     # Redirect to resulted page
