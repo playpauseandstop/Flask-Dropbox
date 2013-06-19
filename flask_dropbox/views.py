@@ -1,7 +1,7 @@
 from dropbox.rest import ErrorResponse
-from dropbox.session import OAuthToken
 from flask import current_app, redirect, render_template, request, session
 
+from .compat import OAuthToken
 from .settings import DROPBOX_REQUEST_TOKEN_KEY
 from .utils import safe_url_for
 

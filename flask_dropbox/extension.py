@@ -3,13 +3,8 @@ from dropbox.session import DropboxSession
 from flask import g, request, session as flask_session, url_for
 from werkzeug.utils import cached_property, import_string
 
-try:
-    # For Dropbox SDK 1.4.1+
-    from dropbox.session import OAuthToken
-except ImportError:
-    from oauth.oauth import OAuthToken
-
 from .blueprint import DropboxBlueprint
+from .compat import OAuthToken
 from .settings import (
     ACCOUNT_INFO_CACHE_KEY, CLIENT_CACHE_KEY, DROPBOX_ACCESS_TOKEN_KEY,
     DROPBOX_REQUEST_TOKEN_KEY, SESSION_CACHE_KEY
