@@ -94,6 +94,7 @@ TEST_METADATA_EMPTY = {
 class TestCase(unittest.TestCase):
 
     def setUp(self):
+        app.config['DROPBOX_CACHE_STORAGE'] = 'self'
         app.config['TESTING'] = True
         self.app = app.test_client()
 
@@ -337,12 +338,13 @@ class TestDropboxViews(TestCase):
 
     def test_delete(self):
         response = self.app.get(self.delete_url)
+        token = [self.token.key, self.token.secret]
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers['Location'], 'http://localhost/')
 
         # ``Authenticate`` with Dropbox API
         with self.app.session_transaction() as sess:
-            sess[DROPBOX_ACCESS_TOKEN_KEY] = self.token
+            sess[DROPBOX_ACCESS_TOKEN_KEY] = token
 
         # Mock ``file_delete`` method
         self.old_file_delete = DropboxClient.file_delete
@@ -355,12 +357,13 @@ class TestDropboxViews(TestCase):
 
     def test_download(self):
         response = self.app.get(self.download_url)
+        token = [self.token.key, self.token.secret]
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers['Location'], 'http://localhost/')
 
         # ``Authenticate`` with Dropbox API
         with self.app.session_transaction() as sess:
-            sess[DROPBOX_ACCESS_TOKEN_KEY] = self.token
+            sess[DROPBOX_ACCESS_TOKEN_KEY] = token
 
         # Mock ``get_file_and_metadata`` method
         self.old_get_file_and_metadata = DropboxClient.get_file_and_metadata
@@ -374,12 +377,13 @@ class TestDropboxViews(TestCase):
 
     def test_home(self):
         response = self.app.get(self.home_url)
+        token = [self.token.key, self.token.secret]
         self.assertEqual(response.status_code, 200)
         self.assertIn('Login with Dropbox', response.data)
 
         # ``Authenticate`` with Dropbox API
         with self.app.session_transaction() as sess:
-            sess[DROPBOX_ACCESS_TOKEN_KEY] = self.token
+            sess[DROPBOX_ACCESS_TOKEN_KEY] = token
 
         response = self.app.get(self.home_url)
         self.assertEqual(response.status_code, 200)
@@ -389,12 +393,13 @@ class TestDropboxViews(TestCase):
 
     def test_files(self):
         response = self.app.get(self.files_url)
+        token = [self.token.key, self.token.secret]
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers['Location'], 'http://localhost/')
 
         # ``Authenticate`` with Dropbox API
         with self.app.session_transaction() as sess:
-            sess[DROPBOX_ACCESS_TOKEN_KEY] = self.token
+            sess[DROPBOX_ACCESS_TOKEN_KEY] = token
 
         # Mock ``account_info`` method
         self.old_account_info = DropboxClient.account_info
@@ -421,12 +426,13 @@ class TestDropboxViews(TestCase):
 
     def test_media(self):
         response = self.app.get(self.media_url)
+        token = [self.token.key, self.token.secret]
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers['Location'], 'http://localhost/')
 
         # ``Authenticate`` with Dropbox API
         with self.app.session_transaction() as sess:
-            sess[DROPBOX_ACCESS_TOKEN_KEY] = self.token
+            sess[DROPBOX_ACCESS_TOKEN_KEY] = token
 
         # Mock ``media`` method
         self.old_media = DropboxClient.media
@@ -443,12 +449,13 @@ class TestDropboxViews(TestCase):
 
     def test_upload(self):
         response = self.app.get(self.upload_url)
+        token = [self.token.key, self.token.secret]
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers['Location'], 'http://localhost/')
 
         # ``Authenticate`` with Dropbox API
         with self.app.session_transaction() as sess:
-            sess[DROPBOX_ACCESS_TOKEN_KEY] = self.token
+            sess[DROPBOX_ACCESS_TOKEN_KEY] = token
 
         response = self.app.get(self.upload_url)
         self.assertEqual(response.status_code, 200)
