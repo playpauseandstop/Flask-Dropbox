@@ -2,17 +2,22 @@ language: python
 python:
  - "2.6"
  - "2.7"
+ - "pypy"
 env:
  - FLASK_VERSION=0.8 DROPBOX_VERSION=1.4
  - FLASK_VERSION=0.9 DROPBOX_VERSION=1.4
+ - FLASK_VERSION=0.10.1 DROPBOX_VERSION=1.4
  - FLASK_VERSION=0.8 DROPBOX_VERSION=1.4.1
  - FLASK_VERSION=0.9 DROPBOX_VERSION=1.4.1
+ - FLASK_VERSION=0.10.1 DROPBOX_VERSION=1.4.1
  - FLASK_VERSION=0.8 DROPBOX_VERSION=1.5
  - FLASK_VERSION=0.9 DROPBOX_VERSION=1.5
+ - FLASK_VERSION=0.10.1 DROPBOX_VERSION=1.5
  - FLASK_VERSION=0.8 DROPBOX_VERSION=1.5.1
  - FLASK_VERSION=0.9 DROPBOX_VERSION=1.5.1
+ - FLASK_VERSION=0.10.1 DROPBOX_VERSION=1.5.1
 install:
- - "pip install -r testapp/requirements.txt --use-mirrors"
+ - "pip install -r testapp/requirements.txt"
  - "pip install -I Flask==$FLASK_VERSION"
  - "pip install -I https://www.dropbox.com/static/developers/dropbox-python-sdk-$DROPBOX_VERSION.zip"
  - "pip install -e ."
