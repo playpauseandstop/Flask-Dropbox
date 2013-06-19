@@ -1,7 +1,6 @@
 from dropbox.client import DropboxClient
 from dropbox.session import DropboxSession
 from flask import request, session as flask_session, url_for, g
-from werkzeug.utils import cached_property
 
 try:
     # For Dropbox SDK 1.4.1+
