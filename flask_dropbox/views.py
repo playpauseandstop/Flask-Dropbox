@@ -1,6 +1,6 @@
 from dropbox.rest import ErrorResponse
-from flask import current_app, redirect, render_template, request, session, \
-    url_for
+from dropbox.session import OAuthToken
+from flask import current_app, redirect, render_template, request, session
 
 from .settings import DROPBOX_REQUEST_TOKEN_KEY
 from .utils import safe_url_for
@@ -32,10 +32,11 @@ def callback():
         return render_template(template, error_oauth_token=True)
 
     # oAuth token **should** be equal to stored request token
-    request_token = session.get(DROPBOX_REQUEST_TOKEN_KEY)
+    token_creds = session.get(DROPBOX_REQUEST_TOKEN_KEY)
 
-    if not request_token or oauth_token != request_token.key:
+    if len(token_creds) != 2 or oauth_token != token_creds[0]:
         return render_template(template, error_not_equal_tokens=True)
+    request_token = OAuthToken(*token_creds)
 
     # Do login with current request token
     try:

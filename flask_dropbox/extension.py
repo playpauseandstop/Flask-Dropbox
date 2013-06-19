@@ -1,7 +1,6 @@
 from dropbox.client import DropboxClient
 from dropbox.session import DropboxSession
 from flask import request, session as flask_session, url_for, g
-from werkzeug.utils import cached_property
 
 try:
     # For Dropbox SDK 1.4.1+
@@ -52,9 +51,9 @@ class Dropbox(object):
         """
         if not hasattr(g, '_client_cache'):
             assert self.is_authenticated, 'Please, login with Dropbox first.'
-            token = flask_session[DROPBOX_ACCESS_TOKEN_KEY]
 
-            self.session.set_token(token.key, token.secret)
+            key, secret = flask_session[DROPBOX_ACCESS_TOKEN_KEY]
+            self.session.set_token(key, secret)
             client = DropboxClient(self.session)
 
             g._client_cache = client
@@ -90,8 +89,7 @@ class Dropbox(object):
         """
         Check if current user logged in with Dropbox or not.
         """
-        db_session_key = flask_session.get(DROPBOX_ACCESS_TOKEN_KEY)
-        return db_session_key and isinstance(db_session_key, OAuthToken)
+        return DROPBOX_ACCESS_TOKEN_KEY in flask_session
 
     def login(self, request_token):
         """
@@ -99,7 +97,7 @@ class Dropbox(object):
         """
         # Generate access token for current user
         access_token = self.session.obtain_access_token(request_token)
-        flask_session[DROPBOX_ACCESS_TOKEN_KEY] = access_token
+        flask_session[DROPBOX_ACCESS_TOKEN_KEY] = [access_token.key, access_token.secret]
 
         # Remove available request token
         del flask_session[DROPBOX_REQUEST_TOKEN_KEY]
@@ -126,6 +124,8 @@ class Dropbox(object):
             del g._account_info_cache
         if hasattr(g, '_client_cache'):
             del g._client_cache
+        if hasattr(g, '_dropbox_session'):
+            del g._dropbox_session
         if DROPBOX_ACCESS_TOKEN_KEY in flask_session:
             del flask_session[DROPBOX_ACCESS_TOKEN_KEY]
 
@@ -149,17 +149,21 @@ class Dropbox(object):
         Generate Dropbox session request token and place it to Flask session.
         """
         token = self.session.obtain_request_token()
-        flask_session[DROPBOX_REQUEST_TOKEN_KEY] = token
+        flask_session[DROPBOX_REQUEST_TOKEN_KEY] = [token.key, token.secret]
         return token
 
-    @cached_property
+    @property
     def session(self):
         """
         Initialize or return already initialized ``DropboxSession`` instance.
         """
-        return DropboxSession(self.DROPBOX_KEY,
-                              self.DROPBOX_SECRET,
-                              self.DROPBOX_ACCESS_TYPE)
+
+        if not hasattr(g, '_dropbox_session'):
+            g._dropbox_session = DropboxSession(
+                self.DROPBOX_KEY,
+                self.DROPBOX_SECRET,
+                self.DROPBOX_ACCESS_TYPE)
+        return g._dropbox_session
 
 
 # Monkey-patch Dropbox SDK ``OAuthToken`` class to add support of pickling
