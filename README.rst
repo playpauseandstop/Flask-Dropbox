@@ -2,7 +2,12 @@
 Flask-Dropbox
 =============
 
-.. image:: https://secure.travis-ci.org/playpauseandstop/Flask-Dropbox.png
+.. image:: https://travis-ci.org/playpauseandstop/Flask-Dropbox.png?branch=master
+    :target: https://travis-ci.org/playpauseandstop/Flask-Dropbox
+
+.. image:: https://pypip.in/v/Flask-Dropbox/badge.png
+    :target: https://crate.io/packages/Flask-Dropbox
+
 
 Dropbox Python SDK support for Flask applications.
 
