@@ -5,6 +5,7 @@
     {{ _("Cannot login with Dropbox. The reason is:") }}
     <em>
       {% if error_oauth_token %}Dropbox API didn't return valid oAuth token.{% endif %}
+      {% if error_request_token %}Looks like, current session contains broken request token.{% endif %}
       {% if error_not_equal_tokens %}Looks like, oAuth token from Dropbox API is broken.{% endif %}
       {% if error_response %}{{ error }}{% endif %}
     </em>
