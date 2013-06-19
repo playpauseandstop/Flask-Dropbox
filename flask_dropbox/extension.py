@@ -149,7 +149,7 @@ class Dropbox(object):
         Generate Dropbox session request token and place it to Flask session.
         """
         token = self.session.obtain_request_token()
-        flask_session[DROPBOX_REQUEST_TOKEN_KEY] = token
+        flask_session[DROPBOX_REQUEST_TOKEN_KEY] = [token.key, token.secret]
         return token
 
     @property
