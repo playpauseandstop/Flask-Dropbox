@@ -5,7 +5,7 @@ Flask-Dropbox
 .. image:: https://travis-ci.org/playpauseandstop/Flask-Dropbox.png?branch=master
     :target: https://travis-ci.org/playpauseandstop/Flask-Dropbox
 
-.. image:: https://pypip.in/v/Flask-Dropbox/badge.png
+.. image:: https://img.shields.io/pypi/v/Flask-Dropbox.svg
     :target: https://crate.io/packages/Flask-Dropbox
 
 
