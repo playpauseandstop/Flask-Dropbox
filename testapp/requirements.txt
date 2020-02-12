@@ -1,5 +1,5 @@
 Flask==0.10.1
-Flask-LazyViews==0.4
+Flask-LazyViews==0.6
 Flask-Script==0.5.3
 dropbox==1.5.1
 mock==1.0.1
