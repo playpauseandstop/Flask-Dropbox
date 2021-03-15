@@ -1,7 +1,7 @@
 Flask==0.10.1
 Flask-LazyViews==0.4
 Flask-Script==0.5.3
-dropbox==1.5.1
+dropbox==11.4.1
 mock==1.0.1
 pep8==1.4.5
 unittest2==0.5.1
