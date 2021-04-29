@@ -1,0 +1,22 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "03:00"
+  open-pull-requests-limit: 10
+  reviewers:
+  - playpauseandstop
+  assignees:
+  - playpauseandstop
+  ignore:
+  - dependency-name: dropbox
+    versions:
+    - 11.0.0
+    - 11.1.0
+    - 11.2.0
+    - 11.4.0
+    - 11.4.1
+    - 11.5.0
+    - 11.6.0
